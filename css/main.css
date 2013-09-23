@@ -121,6 +121,12 @@ section > header {
     border: 2px solid #70AAFF;
     border-radius: 10px;
 }
+.green {
+    color: #0f0;
+}
+.red {
+    color: #f00;
+}
 table {
     border-spacing: 5px;
 }

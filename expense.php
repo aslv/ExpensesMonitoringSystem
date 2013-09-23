@@ -5,11 +5,33 @@ include 'includes/header.php';
 
 if ($_POST)
 {
+	/*
     function validateDate($date)
     {
-        $d = DateTime::createFromFormat($GLOBALS['formatDate'], $date);
-        return $d && $d->format($GLOBALS['formatDate']) == $date;
+        //$d = DateTime::createFromFormat($GLOBALS['formatDate'], $date);
+        $d = date_create_from_format($GLOBALS['formatDate'], $date);
+        //return $d && $d->format($GLOBALS['formatDate']) == $date;
+        return $d && $d == date_create($date);//&& $d == date_format(date_create($date), $GLOBALS['formatDate']);
     }
+    function isValidDate($strDate,$format,$ex)
+    { 
+      $valid = false; 
+      if(is_array($format) && count($format) == 3 && count(explode($ex,$strDate))==3) 
+      { 
+         	$date = array_combine($format,explode($ex,$strDate)); 
+         	if(intval($date['m']) && intval($date['d']) && intval($date['y']))
+         	{ 
+            	$m = $date['m']; $d = $date['d']; $y = $date['y']; 
+            	$valid = checkdate($m,$d,$y); 
+         	} 
+      	} 
+      return $valid; 
+   	} 
+   */
+   	function isDateValid($date)
+   	{
+   		return $date == date($GLOBALS['formatDate'], strtotime($date));
+   	}
     
     if ($_POST['operation'] == 'add_expense')
     {
@@ -19,11 +41,10 @@ if ($_POST)
         $name = htmlspecialchars($name, ENT_QUOTES | ENT_HTML5);
         
         $price = (float)$_POST['price'];
-        if(!$_POST['date'])$date = date($GLOBALS['formatDate']);
-        else $date = $_POST['date'];/*
+        
         $date = trim($_POST['date']);
         $date = str_replace($delim, '', $date);
-        */
+        
         $category = (int)$_POST['category'];
         
         // validation
@@ -38,13 +59,13 @@ if ($_POST)
         {
             $errorLog .= 'Цената на разхода трябва да е положително число!<br>';
             $error = true;
-        }/*
-        if (!validateDate($date))
+        }
+        if (!isDateValid($date))
         {
-            echo "'$date'<br>";
+            // echo "'$date'<br>";
             $errorLog .= 'Форматът на датата не е правилен и/или датата не е валидна!<br>';
             $error = true;
-        }*/
+        }
         if (!array_key_exists($category, $groups))
         {
             $errorLog .= 'Няма такава категория разходи!<br>';
@@ -56,16 +77,19 @@ if ($_POST)
             $record = $name . $delim . $price . $delim . $date . $delim . $category . "\n";
             if (file_put_contents('records', $record, FILE_APPEND))
             {
-                echo 'Записът бе успешно добавен!<br>';
+            	$success = true;
+                $outputBuffer = 'Записът бе успешно добавен!<br>';
             }
             else
             {
-                echo 'Записът не може да се запише! Моля, опитайте по-късно!<br>';
+            	$success = false;
+                $outputBuffer =  'Записът не може да се запише! Моля, опитайте по-късно!<br>';
             }
         }
         else
         {
-            echo 'Възникнаха следните грешки:<br>' . $errorLog;
+        	$success = false;
+            $outputBuffer =  'Възникнаха следните грешки:<br>' . $errorLog;
         }
         
     } // end add_expense
@@ -78,10 +102,9 @@ if ($_POST)
         
         $price = (float)$_POST['price'];
         
-        $date=$_POST['date'];/*
         $date = trim($_POST['date']);
         $date = str_replace($delim, '', $date);
-        */
+        
         $category = (int)$_POST['category'];
         
         $selectedRecord = (int)$_POST['expenses'];
@@ -98,12 +121,12 @@ if ($_POST)
         {
             $errorLog .= 'Цената на разхода трябва да е положително число!<br>';
             $error = true;
-        }/*
-        if (!validateDate($date))
+        }
+        if (!isDateValid($date))
         {
             $errorLog .= 'Форматът на датата не е правилен и/или дата не е валидна!<br>';
             $error = true;
-        }*/
+        }
         if (!array_key_exists($category, $groups))
         {
             $errorLog .= 'Няма такава категория разходи!<br>';
@@ -130,16 +153,19 @@ if ($_POST)
             $result[$selectedRecord] = $record;
             if (file_put_contents('records', $result))
             {
-                echo 'Записът бе успешно редактиран!<br>';
+            	$success = true;
+                $outputBuffer = 'Записът бе успешно редактиран!<br>';
             }
             else
             {
-                echo 'Записът не може да се редактира! Моля, опитайте по-късно!<br>';
+            	$success = false;
+                $outputBuffer = 'Записът не може да се редактира! Моля, опитайте по-късно!<br>';
             }
         }
         else
         {
-            echo 'Възникнаха следните грешки:<br>' . $errorLog;
+        	$success = false;
+            $outputBuffer = 'Възникнаха следните грешки:<br>' . $errorLog;
         }
     } // end edit_expense
     elseif ($_POST['operation'] == 'add_category')
@@ -201,9 +227,8 @@ function generateHeader($header)
 }
 
 /* All the following cases will lead to expense appending */
-if (!$_GET || // empty _GET
-    //!array_key_exists('action', $_GET) || // no 'action' key
-    $_GET['action'] == 'append' || // append operation
+if (!$_GET ||                                                         // empty _GET
+    $_GET['action'] == 'append' ||                                    // append operation
     ($_GET['action'] != 'edit' && $_GET['action'] != 'add_category')) // invalid action
 {
     include 'add_expense.php';
@@ -218,7 +243,13 @@ elseif ($_GET['action'] == 'add_category')
 }
 else
 {
-    echo 'Здравейте!<br>Не сте избрали никаква задача.<br>Моля, изберете от менюто вляво!';
+    echo 'Здравейте!<br>Не сте избрали никаква валидна задача.<br>Моля, изберете от менюто вляво!';
+}
+
+if (isset($error))
+{
+	$color = $success ? 'green' : 'red';
+	echo '<div class="' . $color . '">' . $outputBuffer . '</div>';
 }
 ?>
     <footer>

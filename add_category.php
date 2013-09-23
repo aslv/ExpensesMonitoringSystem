@@ -7,7 +7,7 @@ echo generateHeader('Добавяне на категория разход');
         <input type="text" required name="category" />
     </div>
     <div>
-        <input type="submit" name="Добави категория" />
+        <input type="submit" value="Добави категория" />
     </div>
     <input type="hidden" name="operation" value="add_category" />
 </form>

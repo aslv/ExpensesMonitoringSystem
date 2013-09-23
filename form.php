@@ -25,7 +25,7 @@
             Цена:<input type="number" required step="0.01" name="price" />
         </div>
         <div>
-            Дата:<input type="date" name="date" value="<?= date($GLOBALS['formatDate']); ?>" />
+            Дата:<input type="date" required name="date" value="<?= date($GLOBALS['formatDate']); ?>" />
         </div>
         <div>
             Категория:
@@ -39,7 +39,7 @@
             </select>
         </div>
         <div>
-            <input type="submit" value="Добави" />
+            <input type="submit" value="<?php if($hidden == 'add_expense')echo 'Добави'; else echo 'Редактирай'; ?>" />
         </div>
         <input type="hidden" name="operation" value="<?= $hidden; ?>" />
     </form>
