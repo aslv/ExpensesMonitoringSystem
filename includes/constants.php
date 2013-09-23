@@ -10,7 +10,7 @@ if(file_exists('includes/categories'))
     }
 }
 
-$indexHeading = 'Система за следене на разходите';
+$heading = 'Система за следене на разходите';
 $delim = '!';
 $author = "&#169; Всички права запазени &#9786;";
 $formatDate = 'Y-m-d';

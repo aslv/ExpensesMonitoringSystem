@@ -127,14 +127,14 @@ section > header {
 .red {
     color: #f00;
 }
-table {
+table.index {
     border-spacing: 5px;
 }
-th {
+table.index th {
     border: 2px solid #70AAFF;
     border-radius: 5px;
 }
-td {
+table.index td {
     border: 2px solid #70AAFF;
     border-radius: 5px;
 }

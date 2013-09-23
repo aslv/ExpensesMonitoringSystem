@@ -1,12 +1,12 @@
 <?php
-$pageTitle = '';
+$pageTitle = 'Списък';
 include 'includes/header.php';
 ?>
 
 <div id="site" class="container_12">
     <header>
         <h2>
-            <a id="top"><?= $indexHeading;?></a>
+            <a id="top"><?= $heading;?></a>
         </h2>
     </header>
     
@@ -38,7 +38,7 @@ include 'includes/header.php';
             </div>
         </form>-->
         <br>
-        <table>
+        <table class="index">
             <tr>
                 <th>Наименование</th>
                 <th>Цена</th>

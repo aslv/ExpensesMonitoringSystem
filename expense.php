@@ -1,54 +1,32 @@
 <?php
 mb_internal_encoding('UTF-8');
-$pageTitle = '';
+$pageTitle = 'Разходи';
 include 'includes/header.php';
 
 if ($_POST)
 {
-	/*
-    function validateDate($date)
-    {
-        //$d = DateTime::createFromFormat($GLOBALS['formatDate'], $date);
-        $d = date_create_from_format($GLOBALS['formatDate'], $date);
-        //return $d && $d->format($GLOBALS['formatDate']) == $date;
-        return $d && $d == date_create($date);//&& $d == date_format(date_create($date), $GLOBALS['formatDate']);
-    }
-    function isValidDate($strDate,$format,$ex)
-    { 
-      $valid = false; 
-      if(is_array($format) && count($format) == 3 && count(explode($ex,$strDate))==3) 
-      { 
-         	$date = array_combine($format,explode($ex,$strDate)); 
-         	if(intval($date['m']) && intval($date['d']) && intval($date['y']))
-         	{ 
-            	$m = $date['m']; $d = $date['d']; $y = $date['y']; 
-            	$valid = checkdate($m,$d,$y); 
-         	} 
-      	} 
-      return $valid; 
-   	} 
-   */
    	function isDateValid($date)
    	{
    		return $date == date($GLOBALS['formatDate'], strtotime($date));
    	}
-    
-    if ($_POST['operation'] == 'add_expense')
-    {
-        // normalization
-        $name = trim($_POST['name']);
-        $name = str_replace($delim, '', $name);
+   	function normalize()
+   	{
+   		$name = trim($_POST['name']);
+        $name = str_replace($GLOBALS['delim'], '', $name);
         $name = htmlspecialchars($name, ENT_QUOTES | ENT_HTML5);
         
         $price = (float)$_POST['price'];
         
         $date = trim($_POST['date']);
-        $date = str_replace($delim, '', $date);
+        $date = str_replace($GLOBALS['delim'], '', $date);
         
         $category = (int)$_POST['category'];
-        
-        // validation
-        $error = false;
+
+        return array($name, $price, $date, $category);
+   	}
+   	function validate($name, $price, $date, $category)
+   	{
+   		$error = false;
         $errorLog = '';
         if (mb_strlen($name) < 4)
         {
@@ -66,11 +44,21 @@ if ($_POST)
             $errorLog .= 'Форматът на датата не е правилен и/или датата не е валидна!<br>';
             $error = true;
         }
-        if (!array_key_exists($category, $groups))
+        if (!array_key_exists($category, $GLOBALS['groups']))
         {
             $errorLog .= 'Няма такава категория разходи!<br>';
             $error = true;
         }
+        return array($error, $errorLog);
+   	}
+    
+    if ($_POST['operation'] == 'add_expense')
+    {
+        // normalization
+        list($name, $price, $date, $category) = normalize();
+        
+        // validation
+        list($error, $errorLog) = validate($name, $price, $date, $category);
         
         if (!$error)
         {
@@ -91,47 +79,16 @@ if ($_POST)
         	$success = false;
             $outputBuffer =  'Възникнаха следните грешки:<br>' . $errorLog;
         }
-        
     } // end add_expense
+
     elseif ($_POST['operation'] == 'edit_expense')
     {
         // normalization
-        $name = trim($_POST['name']);
-        $name = str_replace($delim, '', $name);
-        $name = htmlspecialchars($name, ENT_QUOTES | ENT_HTML5);
-        
-        $price = (float)$_POST['price'];
-        
-        $date = trim($_POST['date']);
-        $date = str_replace($delim, '', $date);
-        
-        $category = (int)$_POST['category'];
-        
+        list($name, $price, $date, $category) = normalize($name, $price, $date, $category);
         $selectedRecord = (int)$_POST['expenses'];
         
         // validation
-        $error = false;
-        $errorLog = '';
-        if (mb_strlen($name) < 4)
-        {
-            $errorLog .= 'Наименованието на разхода е прекалено късо!<br>';
-            $error = true;
-        }
-        if ($price <= 0)
-        {
-            $errorLog .= 'Цената на разхода трябва да е положително число!<br>';
-            $error = true;
-        }
-        if (!isDateValid($date))
-        {
-            $errorLog .= 'Форматът на датата не е правилен и/или дата не е валидна!<br>';
-            $error = true;
-        }
-        if (!array_key_exists($category, $groups))
-        {
-            $errorLog .= 'Няма такава категория разходи!<br>';
-            $error = true;
-        }
+        list($error, $errorLog) = validate($name, $price, $date, $category);
         if(file_exists('records'))
         {
             $result = file('records');
@@ -168,6 +125,7 @@ if ($_POST)
             $outputBuffer = 'Възникнаха следните грешки:<br>' . $errorLog;
         }
     } // end edit_expense
+
     elseif ($_POST['operation'] == 'add_category')
     {
         // normalization
@@ -182,21 +140,25 @@ if ($_POST)
             $errorLog = 'Наименованието на категорията е прекалено късо!<br>';
             $error = true;
         }
+
         if (!$error)
         {
             $category .= "\n";
             if (file_put_contents('includes/categories', $category, FILE_APPEND))
             {
-                echo 'Категорията бе добавена успешно!<br>';
+            	$success = true;
+                $outputBuffer = 'Категорията бе добавена успешно!<br>';
             }
             else
             {
-                echo 'Категорията не може да се добеви!<br>Моля, опитайте по-късно!';
+            	$success = false;
+                $outputBuffer = 'Категорията не може да се добеви!<br>Моля, опитайте по-късно!';
             }
         }
         else
         {
-            echo 'Възникнаха следните грешки:<br>' . $errorLog;
+        	$success = false;
+            $outputBuffer = 'Възникнаха следните грешки:<br>' . $errorLog;
         }
     } // end add_category
 } // end if($_POST)
@@ -205,7 +167,7 @@ if ($_POST)
 <div id="site" class="container_12">
     <header>
         <h2>
-            <a id="top"><?= $indexHeading; ?></a>
+            <a id="top"><?= $heading; ?></a>
         </h2>
     </header>
     
@@ -219,6 +181,7 @@ if ($_POST)
     </nav>
 
     <section class="grid_9">
+
 <?php
 
 function generateHeader($header)
@@ -229,18 +192,21 @@ function generateHeader($header)
 /* All the following cases will lead to expense appending */
 if (!$_GET ||                                                         // empty _GET
     $_GET['action'] == 'append' ||                                    // append operation
-    ($_GET['action'] != 'edit' && $_GET['action'] != 'add_category')) // invalid action
+    ($_GET['action'] != 'edit' && $_GET['action'] != 'add_category')) // invalid action - () added for clarity
 {
     include 'add_expense.php';
 }
+
 elseif ($_GET['action'] == 'edit')
 {
     include 'edit_expense.php';
 }
+
 elseif ($_GET['action'] == 'add_category')
 {
     include 'add_category.php';
 }
+
 else
 {
     echo 'Здравейте!<br>Не сте избрали никаква валидна задача.<br>Моля, изберете от менюто вляво!';
@@ -252,6 +218,7 @@ if (isset($error))
 	echo '<div class="' . $color . '">' . $outputBuffer . '</div>';
 }
 ?>
+    
     <footer>
         <h5><?= $author; ?></h5>
     </footer>
