@@ -1,5 +1,5 @@
     <form method="POST" action="expense.php">
-    <table>
+    <table class="form">
     	<?php if ($hidden == 'edit_expense'): ?>
         	<?php if (file_exists('records')):  ?>
            		<?php $records = file('records'); ?>
@@ -31,15 +31,15 @@
     	<?php endif; ?>
         	<tr>
             	<td>Наименование:</td>
-            	<td><input type="text" required name="name" /></td>
+            	<td><input type="text" required name="name" placeholder="min 4 symbols" /></td>
         	</tr>
         	<tr>
             	<td>Цена:</td>
-            	<td><input type="number" required step="0.01" name="price" /></td>
+            	<td><input type="number" required step="0.01" min="0.01" name="price" placeholder="min 0.01" /></td>
         	</tr>
         	<tr>
             	<td>Дата:</td>
-            	<td><input type="date" required name="date" value="<?= date($GLOBALS['formatDate']); ?>" /></td>
+            	<td><input type="date" required name="date" value="<?= date($GLOBALS['formatDate']); ?>" placeholder="yyyy-mm-dd" /></td>
         	</tr>
         	<tr>
             	<td>Категория:</td>

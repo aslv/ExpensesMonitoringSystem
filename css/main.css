@@ -130,19 +130,15 @@ section > header {
 table.index {
     border-spacing: 5px;
 }
-table.index th {
+table.index th, table.index td {
     border: 2px solid #70AAFF;
     border-radius: 5px;
 }
-table.index td {
-    border: 2px solid #70AAFF;
-    border-radius: 5px;
+table.form tr td:nth-child(2) {
+    text-align: right;
 }
-.i {
-    font-style: italic;
-}
-.b {
-    font-weight: bold;
+td input, td select {
+    width: 100%;
 }
 article {
     margin-top: 50px;
@@ -154,92 +150,6 @@ article {
 article header {
     font-size: x-large;
     font-style: bold;
-}
-article > ul {
-    list-style-image: url(../img/bullet.png);
-}
-article ol {
-    list-style-image: none;
-    list-style-type: decimal;
-}
-ul.hyperlinks {
-    list-style-image: none;
-    list-style-type: none;
-}
-ul.hyperlinks li:hover {
-    list-style-image: url(../img/right_arrow.png);
-}
-ul.hyperlinks a {
-    color: #000;
-}
-ul.hyperlinks a:hover {
-    list-style-image: none;
-    color: #70AAFF;
-    text-decoration: underline;
-}
-a.rev_button {
-    display: block;
-    text-align: center;
-    margin: 0 auto;
-    color: #70AAFF;
-    margin: 5px 0px;    
-    border: 2px solid #70AAFF;
-    border-radius: 10px;
-}
-a.rev_button:hover {
-    background-color: #70AAFF;
-    font-weight: bold;
-    color: #fff;
-    -webkit-transition: all 250ms ease;
-    -moz-transition: all 250ms ease;
-    -ms-transition: all 250ms ease;
-    -o-transition: all 250ms ease;
-    transition: all 250ms ease;
-}
-div.centre {
-    margin: 0 auto;
-    width: 10%;
-}
-p.expt {
-	text-indent: 1cm;
-}
-p.mem {
-    text-align: justify;
-}
-cite {
-    display: block;
-    text-align: center;
-}
-p.video {
-   	text-align: center;
-    margin: 0 auto;
-}
-aside {
-    padding: 0;
-    margin: 0;
-    overflow: auto;
-}
-figure {
-    margin: 0;
-    padding: 3px;
-    overflow: auto;
-    border: 2px solid #70AAFF;
-    border-radius: 10px;
-}
-img {
-    border: 1px white;
-    border-radius: 5px;
-    width: 100%;
-}
-figcaption {
-    text-align: center;
-    font-style: italic;
-    color: gray;
-    font-family: serif;
-}
-.sc {
-    font-variant: small-caps;
-    font-size: larger;	
 }
 a {
     text-decoration: none;

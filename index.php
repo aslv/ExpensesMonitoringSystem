@@ -19,24 +19,50 @@ include 'includes/header.php';
     <section class="grid_9">
         <header>
             Налични разходи:
-        </header><!--
-        <form>
+        </header>
+        <form method="GET" action="">
             <div>
-                <select>
-                    Филтър по категория:
-                    <option></option>
+            	Филтър по категория:
+                <select name="category[]" size="3" multiple>
+                	<?php
+                	if (file_exists('includes/categories'))
+                	{
+                		$categories = file('includes/categories');
+                		echo '<option selected value="all">Всички</option>';
+                		foreach ($categories as $key => $category)
+                		{
+                			echo '<option value="' . $key . '">' . $category . '</option>';
+                		}
+                	}
+                	?>
                 </select>
             </div>
             <div>
-                <select>
-                    Филтър по дата:
-                    <option></option>
+            	Филтър по дата:
+                <select name="date[]" size="3" multiple>
+                    <?php
+                    if (file_exists('records'))
+                    {
+                    	$records = file('records');
+                    	foreach ($records as $record)
+                    	{
+                    		$cells = explode($delim, $record);
+                    		$dates[] = $cells[2];
+                    	}
+                    	$dates = array_unique($dates);
+                    	echo '<option selected value="all">Всички</option>';
+                    	foreach ($dates as $date)
+                    	{
+                    		echo '<option value="' . $date . '">' . $date . '</option>';
+                    	}
+                    }
+                    ?>
                 </select>
             </div>
             <div>
                 <input type="submit" value="Покажи"/>
             </div>
-        </form>-->
+        </form>
         <br>
         <table class="index">
             <tr>
@@ -53,15 +79,76 @@ include 'includes/header.php';
                 foreach($result as $record)
                 {
                     $columns = explode($delim, $record);
-                    $totalSum += (float)$columns[1];
-                    echo '<tr>
+                    if ($_GET && ($_GET['category'] || $_GET['date'])) // if filters are set
+                    {
+                    	if ($_GET['category']) // if category filter is on
+                    	{
+                    		if ($_GET['category'][0] == 'all')
+                    		{
+                    			$categoryCheck = true;
+                    		}
+                    		else
+                    		{
+                    			$categoryCheck = false;
+                    			foreach ($_GET['category'] as $category)
+                    			{
+                    				if ($category . "\n" == $columns[3])
+                    				{
+                    					$categoryCheck = true;
+                    					break;
+                    				}
+                    			}
+                    		}
+                    	}
+                    	if ($_GET['date']) // if date filter is on
+                    	{
+                    		if ($_GET['date'][0] == 'all')
+                    		{
+                    			$dateCheck = true;
+                    		}
+                    		else
+                    		{
+                    			$dateCheck = false;
+                    			foreach ($_GET['date'] as $date)
+                    			{
+                    				if ($date == $columns[2])
+                    				{
+                    					$dateCheck = true;
+                    					break;
+                    				}
+                    			}
+                    		}
+                    	}
+                    	if ($categoryCheck && $dateCheck)
+                    	{
+                    		$totalSum += (float)$columns[1];
+                    		echo '<tr>
+                               	   <td>' . $columns[0] . '</td>
+                                   <td>' . $columns[1] . '</td>
+                                   <td>' . $columns[2] . '</td>
+                                   <td>' . $columns[3] . '</td>
+                                </tr>';
+                    	}
+                    }
+                    else
+                    {
+                    	$totalSum += (float)$columns[1];
+                    	echo '<tr>
                                <td>' . $columns[0] . '</td>
                                <td>' . $columns[1] . '</td>
                                <td>' . $columns[2] . '</td>
                                <td>' . $columns[3] . '</td>
-                           </tr>';
+                            </tr>';
+                    }
                 }
-                echo '<tr><th>ОБЩО</th><th colspan="3">' . $totalSum . '</th></tr>';
+                if ($totalSum == 0)
+                {
+                	echo '<tr><td colspan="4">Съжаляваме, но нямя записи, отговарящи на посочените от Вас критерии!</td></tr>';
+                }
+                else
+                {
+                	echo '<tr><th>ОБЩО</th><th colspan="3">' . $totalSum . '</th></tr>';
+                }
             }
             else
             {
