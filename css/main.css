@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
 #site {
     padding: 0;
     overflow: hidden;
@@ -25,7 +29,7 @@ nav ul {
     padding: 0;
     list-style: none;
 }
-nav li { /*only for supmenus*/
+nav li {
     margin: 5px 0px;
     display: block;
     list-style: none;
@@ -140,6 +144,41 @@ table.form tr td:nth-child(2) {
 td input, td select {
     width: 100%;
 }
+.tip {
+    font-style: italic;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    padding-left: 15px;
+    color: gray;
+}
+input[type="submit"] {
+    /*
+    background-color: #FFF;
+    font-color: #70AAFF;
+    font-size: 1.1em;
+    width: 200px;
+    border: 2px solid #70AAFF;
+    border-radius: 5px;
+    */
+    width: 200px;
+    font-size: 1.1em;
+}
+/*
+input[type="submit"]:hover {
+    background-color: #70AAFF;
+    font-color: #FFF;
+    -webkit-transition: all 500ms ease;
+    -moz-transition: all 500ms ease;
+    -ms-transition: all 500ms ease;
+    -o-transition: all 500ms ease;
+    transition: all 500ms ease;
+}
+*/
+.filter {
+    float: right;
+    text-align: left;
+    margin-right: 50px;
+}
 article {
     margin-top: 50px;
     border: 2px solid #70AAFF;
@@ -155,6 +194,7 @@ a {
     text-decoration: none;
 }
 footer {
+    margin-top: 50px;
     clear: both;
-    text-align: center
+    text-align: center;
 }

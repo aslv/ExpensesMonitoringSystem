@@ -1,11 +1,11 @@
     <form method="POST" action="expense.php">
     <table class="form">
-    	<?php if ($hidden == 'edit_expense'): ?>
+    	<?php if ($hidden == 'edit_expense'): ?> <!-- separate ifs for clarity -->
         	<?php if (file_exists('records')):  ?>
            		<?php $records = file('records'); ?>
             	<tr>
             		<td>
-                		Моля, изберете кой разход желаете да редактирате:
+                		Разход за редактиране:
                 	</td>
                 	<td>
                 		<select required name="expenses">;
@@ -18,10 +18,13 @@
                 		?>
                 		</select>
                 	</td>
+                	<td class="tip">
+                		* Изберете един разход от списъка
+                	</td>
             	</tr>
         	<?php else: ?>
         		<tr>
-        			<td colspan="2">
+        			<td colspan="3">
             			<div class="red">
             				Четенето на списъка с категории пропадна!<br>Моля, опитайте по-късно!
             			</div>
@@ -31,15 +34,18 @@
     	<?php endif; ?>
         	<tr>
             	<td>Наименование:</td>
-            	<td><input type="text" required name="name" placeholder="min 4 symbols" /></td>
+            	<td><input type="text" required name="name" placeholder="min 4 symbols" maxlength="50" /></td>
+            	<td class="tip">* Въведете заглавие на разхода (минимум 4 символа)</td>
         	</tr>
         	<tr>
             	<td>Цена:</td>
             	<td><input type="number" required step="0.01" min="0.01" name="price" placeholder="min 0.01" /></td>
+            	<td class="tip">* Цена на разхода (минимум 0.01, два знака след десетичната <u>точка</u>)</td>
         	</tr>
         	<tr>
             	<td>Дата:</td>
             	<td><input type="date" required name="date" value="<?= date($GLOBALS['formatDate']); ?>" placeholder="yyyy-mm-dd" /></td>
+            	<td class="tip">* Изберете дата на разхода (във формат yyyy-mm-dd)</td>
         	</tr>
         	<tr>
             	<td>Категория:</td>
@@ -53,9 +59,10 @@
             		?>
             	   	</select>
             	</td>
+            	<td class="tip">* Изберете категория на разхода от списъка</td>
         	</tr>
         	<tr>
-        		<td colspan="2">
+        		<td colspan="3">
             		<input type="submit" value="<?php if($hidden == 'add_expense')echo 'Добави'; else echo 'Редактирай'; ?>" />
             	</td>
         	</tr>

@@ -84,7 +84,7 @@ if ($_POST)
     elseif ($_POST['operation'] == 'edit_expense')
     {
         // normalization
-        list($name, $price, $date, $category) = normalize($name, $price, $date, $category);
+        list($name, $price, $date, $category) = normalize();
         $selectedRecord = (int)$_POST['expenses'];
         
         // validation
